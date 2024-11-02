@@ -116,7 +116,7 @@ export async function fetchData() {
     obj.type = 'Movie';
     obj.url = 'https://www.tvcine.pt/passatempos/' + passatempo.id;
     obj.img = passatempo.imagemCapa.url;
-    obj.state = passatempo.estado;
+    obj.state = (passatempo.estado == "activo") ? true : false;
     obj.published = normalizeDate(passatempo.dataInicio, "tvcine");
     obj.finished = normalizeDate(passatempo.dataFim, "tvcine");
     data.push(obj);
@@ -131,13 +131,12 @@ export async function fetchData() {
     obj.type = "Movie";
     obj.url = passatempo.url;
     obj.img = passatempo.imageUrl;
-    obj.state = "A decorrer";
+    obj.state = true;
     obj.published = normalizeDate(passatempo.date, "sapomag");
     obj.finished = "?";
     data.push(obj);
   });
   console.log(sapoMagData);
-
 
   const rtpData = await fetchRTP();
   rtpData.forEach((passatempo) => {
@@ -146,7 +145,7 @@ export async function fetchData() {
     obj.type = "Movie";
     obj.url = passatempo.url;
     obj.img = passatempo.imageUrl;
-    obj.state = "A decorrer";
+    obj.state = getState(passatempo.title, "rtp");
     obj.published = normalizeDate(passatempo.date, "rtp");
     obj.finished = "?";
     data.push(obj);
@@ -157,7 +156,18 @@ export async function fetchData() {
     obj.published = obj.published.toISOString();
     obj.finished = (obj.finished == "?") ? "-" : obj.finished.toISOString();
   });
+
   return data;
+}
+
+function getState(title, source) {
+  switch(source) {
+    case "rtp":
+      return title.substring(0,11) != "[Terminado]";
+      break;
+    default:
+      return false;
+  }
 }
 
 function getMonth(month) {

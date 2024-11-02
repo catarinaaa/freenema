@@ -13,9 +13,9 @@ export default function Card({ key, data }) {
       </div>
 
       <h2 className="text-l font-bold">{data.title}</h2>
-      <p className="text-xs">TERMINA A {data.finished}</p>
+      <p className="text-xs">TERMINA A { (data.finished == "-") ? "-" : new Date(data.finished).toLocaleDateString() }</p>
       <button className="text-sm bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-        Participar
+        { (data.state == true) ? "Participar" : "Ver vencedores" }
       </button>
     </div>
     </li>

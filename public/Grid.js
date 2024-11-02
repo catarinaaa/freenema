@@ -25,7 +25,7 @@ export default function Grid({ data }) {
   return (
     <div className="grid gap-4 mx-40 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
       {data.map((passatempo) => (
-        <ul><Card key={passatempo.id} data={passatempo} /></ul>
+        <ul><Card key={passatempo.id} data={passatempo} suppressHydrationWarning /></ul>
       ))}
     </div>
   );
