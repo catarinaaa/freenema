@@ -9,7 +9,7 @@ export default function Card({ key, data }) {
         <div className="text-xs bg-teal-200  p-1 w-[55px] text-center">
           {data.type}
         </div>
-        <p>{data.published}</p>
+        <p> { new Date(data.published).toLocaleDateString() } </p>
       </div>
 
       <h2 className="text-l font-bold">{data.title}</h2>

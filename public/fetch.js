@@ -117,10 +117,12 @@ export async function fetchData() {
     obj.url = 'https://www.tvcine.pt/passatempos/' + passatempo.id;
     obj.img = passatempo.imagemCapa.url;
     obj.state = passatempo.estado;
-    obj.published = passatempo.dataInicio;
-    obj.finished = passatempo.dataFim;
+    obj.published = normalizeDate(passatempo.dataInicio, "tvcine");
+    obj.finished = normalizeDate(passatempo.dataFim, "tvcine");
     data.push(obj);
   });
+  console.log(tvCineData);
+
 
   const sapoMagData = await fetchSapoMag();
   sapoMagData.forEach((passatempo) => {
@@ -130,10 +132,11 @@ export async function fetchData() {
     obj.url = passatempo.url;
     obj.img = passatempo.imageUrl;
     obj.state = "A decorrer";
-    obj.published = passatempo.date;
+    obj.published = normalizeDate(passatempo.date, "sapomag");
     obj.finished = "?";
     data.push(obj);
   });
+  console.log(sapoMagData);
 
 
   const rtpData = await fetchRTP();
@@ -144,11 +147,69 @@ export async function fetchData() {
     obj.url = passatempo.url;
     obj.img = passatempo.imageUrl;
     obj.state = "A decorrer";
-    obj.published = passatempo.date;
+    obj.published = normalizeDate(passatempo.date, "rtp");
     obj.finished = "?";
     data.push(obj);
   });
-  console.log(fetchRTP());
+  console.log(rtpData);
 
+  data.map((obj) => {
+    obj.published = obj.published.toISOString();
+    obj.finished = (obj.finished == "?") ? "-" : obj.finished.toISOString();
+  });
   return data;
+}
+
+function getMonth(month) {
+    switch(month.toLowerCase().substring(0,3)) {
+      case 'jan':
+        return "0";
+      case "fev":
+        return "1";
+      case "mar":
+        return "2";
+      case "abr":
+        return "3";
+      case "mai":
+        return "4";
+      case "jun":
+        return "5";
+      case "jul":
+        return "6";
+      case "ago":
+        return "7"
+      case "set":
+        return "8";
+      case "out":
+        return "9";
+      case "nov":
+        return "10";
+      case "dez":
+        return "11";
+    }
+}
+
+function normalizeDate(date, source) {
+  var dateNormalized;
+  switch (source) {
+    case 'tvcine':
+      dateNormalized = new Date(date);
+      break;      
+    case 'sapomag':
+      const splitted1 = date.split("-");
+      // Sets localtime as UTC
+      dateNormalized = new Date(Date.UTC(splitted1[2], getMonth(splitted1[1]), splitted1[0]));
+      break;
+    case 'rtp':
+      const splitted2 = date.split(" ");
+      const time = splitted2[3].split(":");
+      dateNormalized = new Date(Date.UTC(splitted2[2], getMonth(splitted2[1]), splitted2[0], time[0], time[1], "0"));
+      break;
+    default:
+      dateNormalized = new Date(Date.UTC("1970", "1", "1"));
+  }
+  if(dateNormalized == undefined) {
+    dateNormalized = new Date(Date.UTC("1970", "1", "1"));
+  }
+  return dateNormalized;
 }
