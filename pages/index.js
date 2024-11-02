@@ -19,11 +19,13 @@ export default function Home({ dataList }) {
     <div>
       <div>
         <Head>
-          <title>Passatempos App</title>
+          <title>Freenema</title>
+          <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap"
+            rel="stylesheet"
+          />
         </Head>
       </div>
-      <h1>freenema</h1>
-      <main className={styles.main}></main>
       <Content data={dataList} />
     </div>
   );
