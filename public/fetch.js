@@ -152,6 +152,10 @@ export async function fetchData() {
   });
   console.log(rtpData);
 
+  data.sort(function(a,b){
+    return b.published - a.published;
+  });
+
   data.map((obj) => {
     obj.published = obj.published.toISOString();
     obj.finished = (obj.finished == "?") ? "-" : obj.finished.toISOString();
